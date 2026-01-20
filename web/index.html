@@ -32,7 +32,7 @@
       flex-direction: column;
       gap: 16px;
       border: 1px solid rgba(148, 163, 184, 0.35);
-      max-width: 650px;
+      max-width: 680px;
     }
 
     .header {
@@ -87,8 +87,15 @@
       color: #f87171;
     }
 
+    /* 设置行样式 */
+    .settings-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
     /* 难度选择样式 */
-    .difficulty-selector {
+    .selector-box {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -97,17 +104,17 @@
       border-radius: 8px;
     }
 
-    .difficulty-label {
+    .selector-label {
       font-size: 14px;
       color: #94a3b8;
     }
 
-    .difficulty-buttons {
+    .selector-buttons {
       display: flex;
       gap: 6px;
     }
 
-    .diff-btn {
+    .sel-btn {
       padding: 6px 14px;
       border: none;
       border-radius: 6px;
@@ -119,26 +126,37 @@
       color: #94a3b8;
     }
 
-    .diff-btn:hover {
+    .sel-btn:hover {
       background: rgba(71, 85, 105, 0.8);
       color: #e5e7eb;
     }
 
-    .diff-btn.active {
+    .sel-btn.active {
       color: #fff;
     }
 
-    .diff-btn.easy.active {
+    .sel-btn.easy.active {
       background: #10b981;
       box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
     }
 
-    .diff-btn.hard.active {
+    .sel-btn.hard.active {
       background: #ef4444;
       box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
     }
 
-    .diff-btn:disabled {
+    .sel-btn.godmode.active {
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      box-shadow: 0 2px 12px rgba(139, 92, 246, 0.5);
+      animation: godPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes godPulse {
+      0%, 100% { box-shadow: 0 2px 12px rgba(139, 92, 246, 0.5); }
+      50% { box-shadow: 0 2px 20px rgba(236, 72, 153, 0.7); }
+    }
+
+    .sel-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -154,6 +172,11 @@
       display: block;
       background: #0f172a;
       box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    canvas.godmode {
+      border-color: #8b5cf6;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 20px rgba(139, 92, 246, 0.3);
     }
 
     .overlay {
@@ -181,6 +204,13 @@
       font-weight: 700;
       color: #10b981;
       text-shadow: 0 2px 10px rgba(16, 185, 129, 0.5);
+    }
+
+    .overlay-title.godmode {
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .overlay-text {
@@ -211,17 +241,33 @@
       color: #f87171;
     }
 
+    .overlay-mode.godmode {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3));
+      color: #e879f9;
+    }
+
     .controls {
       background: rgba(30, 41, 59, 0.6);
       border-radius: 8px;
       padding: 12px 16px;
       font-size: 14px;
       color: #cbd5e1;
-      line-height: 1.6;
+      line-height: 1.8;
     }
 
     .controls strong {
       color: #10b981;
+    }
+
+    .controls .key {
+      display: inline-block;
+      background: rgba(71, 85, 105, 0.6);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #e5e7eb;
+      margin: 0 2px;
     }
 
     @media (max-width: 680px) {
@@ -249,8 +295,12 @@
         gap: 12px;
       }
 
-      .difficulty-selector {
+      .settings-row {
         width: 100%;
+      }
+
+      .selector-box {
+        flex: 1;
         justify-content: space-between;
       }
     }
@@ -260,16 +310,25 @@
   <div class="container">
     <div class="header">
       <h1 class="title">🐍 贪吃蛇</h1>
-      <div class="difficulty-selector">
-        <span class="difficulty-label">难度:</span>
-        <div class="difficulty-buttons">
-          <button class="diff-btn easy active" id="easyBtn" onclick="setDifficulty('easy')">🌱 简单</button>
-          <button class="diff-btn hard" id="hardBtn" onclick="setDifficulty('hard')">🔥 困难</button>
-        </div>
-      </div>
       <div class="score-status">
         <div class="score">分数: <span id="score">0</span></div>
         <div class="status playing" id="status">进行中</div>
+      </div>
+    </div>
+
+    <div class="settings-row">
+      <div class="selector-box">
+        <span class="selector-label">难度:</span>
+        <div class="selector-buttons">
+          <button class="sel-btn easy active" id="easyBtn" onclick="setDifficulty('easy')">🌱 简单</button>
+          <button class="sel-btn hard" id="hardBtn" onclick="setDifficulty('hard')">🔥 困难</button>
+        </div>
+      </div>
+      <div class="selector-box">
+        <span class="selector-label">模式:</span>
+        <div class="selector-buttons">
+          <button class="sel-btn godmode" id="godmodeBtn" onclick="toggleGodMode()">⭐ 无敌模式</button>
+        </div>
       </div>
     </div>
 
@@ -278,13 +337,14 @@
       <div class="overlay" id="overlay">
         <div class="overlay-title">贪吃蛇</div>
         <div class="overlay-text">按空格键开始游戏</div>
-        <div class="overlay-hint">使用方向键控制蛇的移动</div>
+        <div class="overlay-hint">使用方向键或 WASD 控制蛇的移动</div>
       </div>
     </div>
 
     <div class="controls">
-      <strong>游戏说明：</strong>使用 <strong>方向键 ↑↓←→</strong> 控制蛇的移动，按 <strong>空格键</strong> 开始/暂停/重新开始游戏<br>
-      <strong>难度说明：</strong><strong style="color: #34d399;">简单模式</strong> 蛇移动较慢，<strong style="color: #f87171;">困难模式</strong> 蛇移动很快
+      <strong>操作说明：</strong>使用 <span class="key">↑↓←→</span> 或 <span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span> 控制蛇移动，<span class="key">空格</span> 开始/暂停/重新开始<br>
+      <strong>难度说明：</strong><strong style="color: #34d399;">简单</strong> 蛇移动较慢，<strong style="color: #f87171;">困难</strong> 蛇移动很快<br>
+      <strong>无敌模式：</strong><strong style="color: #e879f9;">可穿墙、可穿过自己</strong>（从一边出去会从另一边出来）
     </div>
   </div>
 
@@ -296,6 +356,7 @@
     const overlay = document.getElementById('overlay');
     const easyBtn = document.getElementById('easyBtn');
     const hardBtn = document.getElementById('hardBtn');
+    const godmodeBtn = document.getElementById('godmodeBtn');
 
     const UNIT_SIZE = 25;
     const BOARD_WIDTH = canvas.width;
@@ -304,12 +365,12 @@
     // 难度设置
     const DIFFICULTY_SETTINGS = {
       easy: {
-        delay: 150,        // 移动间隔（毫秒），越大越慢
+        delay: 150,
         name: '简单模式',
         color: '#34d399'
       },
       hard: {
-        delay: 60,         // 移动间隔（毫秒），越小越快
+        delay: 60,
         name: '困难模式',
         color: '#f87171'
       }
@@ -317,6 +378,7 @@
 
     let currentDifficulty = 'easy';
     let currentDelay = DIFFICULTY_SETTINGS.easy.delay;
+    let godMode = false; // 无敌模式
 
     let snake = [];
     let food = null;
@@ -326,35 +388,38 @@
     let paused = false;
     let score = 0;
     let gameLoop = null;
-    let gameStarted = false; // 游戏是否已经开始过
+    let gameStarted = false;
 
     function setDifficulty(difficulty) {
-      // 只有在游戏未运行或已结束时才能切换难度
-      if (running && !paused) {
-        return; // 游戏进行中不能切换
-      }
+      if (running && !paused) return;
 
       currentDifficulty = difficulty;
       currentDelay = DIFFICULTY_SETTINGS[difficulty].delay;
 
-      // 更新按钮状态
       easyBtn.classList.toggle('active', difficulty === 'easy');
       hardBtn.classList.toggle('active', difficulty === 'hard');
 
-      // 如果游戏已暂停，更新游戏循环速度
-      if (paused) {
-        // 不需要做什么，恢复时会使用新速度
-      }
-
-      // 如果还没开始游戏，重新显示开始提示
       if (!gameStarted) {
         showStartOverlay();
       }
     }
 
-    function updateDifficultyButtons(disabled) {
+    function toggleGodMode() {
+      if (running && !paused) return;
+
+      godMode = !godMode;
+      godmodeBtn.classList.toggle('active', godMode);
+      canvas.classList.toggle('godmode', godMode);
+
+      if (!gameStarted) {
+        showStartOverlay();
+      }
+    }
+
+    function updateSettingsButtons(disabled) {
       easyBtn.disabled = disabled;
       hardBtn.disabled = disabled;
+      godmodeBtn.disabled = disabled;
     }
 
     function init() {
@@ -371,7 +436,7 @@
       gameStarted = false;
       updateScore();
       updateStatus('ready');
-      updateDifficultyButtons(false);
+      updateSettingsButtons(false);
       generateFood();
       draw();
       showStartOverlay();
@@ -379,11 +444,15 @@
 
     function showStartOverlay() {
       const diffSettings = DIFFICULTY_SETTINGS[currentDifficulty];
+      const godModeText = godMode ? ' + 无敌模式' : '';
+      const titleClass = godMode ? 'overlay-title godmode' : 'overlay-title';
+      
       overlay.innerHTML = `
-        <div class="overlay-title">贪吃蛇</div>
-        <div class="overlay-mode ${currentDifficulty}">${diffSettings.name}</div>
+        <div class="${titleClass}">贪吃蛇</div>
+        <div class="overlay-mode ${currentDifficulty}">${diffSettings.name}${godModeText}</div>
+        ${godMode ? '<div class="overlay-mode godmode">⭐ 穿墙 + 穿身</div>' : ''}
         <div class="overlay-text">按空格键开始游戏</div>
-        <div class="overlay-hint">使用方向键控制蛇的移动</div>
+        <div class="overlay-hint">使用方向键或 WASD 控制蛇的移动</div>
       `;
       overlay.classList.remove('hidden');
     }
@@ -397,13 +466,13 @@
         gameStarted = true;
         hideOverlay();
         updateStatus('playing');
-        updateDifficultyButtons(true); // 游戏中禁用难度切换
+        updateSettingsButtons(true);
         gameLoop = setInterval(update, currentDelay);
       } else if (paused) {
         paused = false;
         hideOverlay();
         updateStatus('playing');
-        updateDifficultyButtons(true);
+        updateSettingsButtons(true);
         gameLoop = setInterval(update, currentDelay);
       }
     }
@@ -413,14 +482,17 @@
       paused = true;
       clearInterval(gameLoop);
       updateStatus('paused');
-      updateDifficultyButtons(false); // 暂停时可以切换难度
+      updateSettingsButtons(false);
       
       const diffSettings = DIFFICULTY_SETTINGS[currentDifficulty];
+      const godModeText = godMode ? ' + 无敌' : '';
+      const titleClass = godMode ? 'overlay-title godmode' : 'overlay-title';
+      
       overlay.innerHTML = `
-        <div class="overlay-title">游戏暂停</div>
-        <div class="overlay-mode ${currentDifficulty}">${diffSettings.name}</div>
+        <div class="${titleClass}">游戏暂停</div>
+        <div class="overlay-mode ${currentDifficulty}">${diffSettings.name}${godModeText}</div>
         <div class="overlay-text">按空格键继续</div>
-        <div class="overlay-hint">可在暂停时切换难度</div>
+        <div class="overlay-hint">可在暂停时切换难度和模式</div>
       `;
       overlay.classList.remove('hidden');
     }
@@ -466,6 +538,14 @@
           break;
       }
 
+      // 无敌模式：穿墙处理
+      if (godMode) {
+        if (head.x < 0) head.x = BOARD_WIDTH - UNIT_SIZE;
+        if (head.x >= BOARD_WIDTH) head.x = 0;
+        if (head.y < 0) head.y = BOARD_HEIGHT - UNIT_SIZE;
+        if (head.y >= BOARD_HEIGHT) head.y = 0;
+      }
+
       snake.push(head);
 
       if (!checkFood()) {
@@ -475,6 +555,11 @@
 
     function checkCollision() {
       const head = snake[snake.length - 1];
+
+      // 无敌模式：不检查碰撞
+      if (godMode) {
+        return false;
+      }
 
       // 检查墙壁碰撞
       if (head.x < 0 || head.x >= BOARD_WIDTH || head.y < 0 || head.y >= BOARD_HEIGHT) {
@@ -498,7 +583,8 @@
 
     function generateFood() {
       let valid = false;
-      while (!valid) {
+      let attempts = 0;
+      while (!valid && attempts < 1000) {
         food = {
           x: Math.floor(Math.random() * (BOARD_WIDTH / UNIT_SIZE)) * UNIT_SIZE,
           y: Math.floor(Math.random() * (BOARD_HEIGHT / UNIT_SIZE)) * UNIT_SIZE
@@ -511,16 +597,17 @@
             break;
           }
         }
+        attempts++;
       }
     }
 
     function draw() {
       // 清空画布
-      ctx.fillStyle = '#0f172a';
+      ctx.fillStyle = godMode ? '#0d1117' : '#0f172a';
       ctx.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
 
       // 绘制网格
-      ctx.strokeStyle = '#1e293b';
+      ctx.strokeStyle = godMode ? '#1f1f3a' : '#1e293b';
       ctx.lineWidth = 1;
       for (let i = 0; i <= BOARD_WIDTH / UNIT_SIZE; i++) {
         ctx.beginPath();
@@ -544,8 +631,16 @@
       // 绘制蛇
       snake.forEach((segment, index) => {
         if (index === snake.length - 1) {
-          // 蛇头 - 根据难度使用不同颜色
-          ctx.fillStyle = currentDifficulty === 'hard' ? '#ef4444' : '#10b981';
+          // 蛇头
+          if (godMode) {
+            // 无敌模式：渐变紫色
+            const gradient = ctx.createLinearGradient(segment.x, segment.y, segment.x + UNIT_SIZE, segment.y + UNIT_SIZE);
+            gradient.addColorStop(0, '#8b5cf6');
+            gradient.addColorStop(1, '#ec4899');
+            ctx.fillStyle = gradient;
+          } else {
+            ctx.fillStyle = currentDifficulty === 'hard' ? '#ef4444' : '#10b981';
+          }
           ctx.fillRect(segment.x + 1, segment.y + 1, UNIT_SIZE - 2, UNIT_SIZE - 2);
           
           // 绘制眼睛
@@ -567,8 +662,14 @@
             ctx.fillRect(segment.x + UNIT_SIZE - eyeOffset - eyeSize, segment.y + UNIT_SIZE - eyeOffset - eyeSize, eyeSize, eyeSize);
           }
         } else {
-          // 蛇身 - 根据难度使用不同颜色
-          ctx.fillStyle = currentDifficulty === 'hard' ? '#f87171' : '#22c55e';
+          // 蛇身
+          if (godMode) {
+            // 无敌模式：渐变紫粉色，根据位置变化
+            const ratio = index / snake.length;
+            ctx.fillStyle = `hsl(${280 + ratio * 40}, 70%, 60%)`;
+          } else {
+            ctx.fillStyle = currentDifficulty === 'hard' ? '#f87171' : '#22c55e';
+          }
           ctx.fillRect(segment.x + 1, segment.y + 1, UNIT_SIZE - 2, UNIT_SIZE - 2);
         }
       });
@@ -578,12 +679,15 @@
       running = false;
       clearInterval(gameLoop);
       updateStatus('gameover');
-      updateDifficultyButtons(false); // 游戏结束可以切换难度
+      updateSettingsButtons(false);
 
       const diffSettings = DIFFICULTY_SETTINGS[currentDifficulty];
+      const godModeText = godMode ? ' + 无敌' : '';
+      const titleClass = godMode ? 'overlay-title godmode' : 'overlay-title';
+      
       overlay.innerHTML = `
-        <div class="overlay-title">游戏结束！</div>
-        <div class="overlay-mode ${currentDifficulty}">${diffSettings.name}</div>
+        <div class="${titleClass}">游戏结束！</div>
+        <div class="overlay-mode ${currentDifficulty}">${diffSettings.name}${godModeText}</div>
         <div class="overlay-text">最终分数: ${score}</div>
         <div class="overlay-hint">按空格键重新开始</div>
       `;
@@ -645,20 +749,25 @@
 
       if (!running || paused) return;
 
+      // 方向键控制
       switch (e.code) {
         case 'ArrowUp':
+        case 'KeyW':
           e.preventDefault();
           if (direction !== 'DOWN') nextDirection = 'UP';
           break;
         case 'ArrowDown':
+        case 'KeyS':
           e.preventDefault();
           if (direction !== 'UP') nextDirection = 'DOWN';
           break;
         case 'ArrowLeft':
+        case 'KeyA':
           e.preventDefault();
           if (direction !== 'RIGHT') nextDirection = 'LEFT';
           break;
         case 'ArrowRight':
+        case 'KeyD':
           e.preventDefault();
           if (direction !== 'LEFT') nextDirection = 'RIGHT';
           break;
